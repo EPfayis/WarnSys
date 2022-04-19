@@ -2,9 +2,11 @@ from django.shortcuts import render
 from WarnSys.Imports import *
 from locations.models import *
 from .models import *
+from .serializer import *
 
 class ClsCamera(ListAPIView):
 
+    serializer_class = CameraSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
 
@@ -51,3 +53,20 @@ class ClsCamera(ListAPIView):
                 i.delete()
             return JsonResponse(getErrorDict("An error occurred", str(e)))
 
+    def get_queryset(self):
+        try:
+            objUser = self.request.user
+            userValidator = UserValidator(objUser)
+
+            if(userValidator.is_superuser == True):
+                self.serializer_class = CameraSerializerAdmin
+
+            searchText = self.request.GET.get("searchText","")
+
+            qs = TblCamera.objects.all()
+            qs = qs.filter(Q(location__name__icontains=searchText) | Q(description__icontains=searchText))
+            return qs
+
+        except Exception as e:
+            print("An error occurred : ", str(e))
+            return TblCamera.objects.none()
