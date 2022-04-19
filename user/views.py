@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from WarnSys.Imports import *
 from .serializers import *
+from .models import *
 # Create your views here.
+
+
 class ClsUser(ListAPIView):
 
     serializer_class = UserSerializer
@@ -67,6 +70,34 @@ class ClsUser(ListAPIView):
                 i.delete()
             return JsonResponse(getErrorDict("an error occured",str(e)))
 
+    def get_queryset(self):
+
+        try:
+            objUser = self.request.user
+            userValidator = UserValidator(objUser)
+            print("User Identification Completed")
+
+            if userValidator.is_superuser == False:
+                "Normal user can only see their own profile"
+                return User.objects.filter(id= objUser.id)
+
+            "if execution reached here, then requested user is admin"
+
+            searchText = self.request.GET.get("searchText","")
+            print("Request Accepted")
+
+            qsUser = User.objects.all()
+
+            if searchText != "":
+                lst_user_id = TblUserDetails.objects.filter(mobile__contains=searchText).values_list("user_id",flat=True)
+                qsUser = qsUser.filter(Q(first_name__icontains= searchText) | Q(id__in=lst_user_id))
+
+            return qsUser
+
+
+        except Exception as e:
+            print("Exception occured : ", str(e))
+            return User.objects.none()
 
 class ClsLogin(ObtainAuthToken):
 
