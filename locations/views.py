@@ -39,7 +39,7 @@ class ClsMainLocation(ListAPIView):
             print("main location saved")
 
 
-            return JsonResponse(getSuccessDict("main location saved",{"id" : obj_mainlocation.id}))
+            return JsonResponse(getSuccessDict("Location saved",{"id" : obj_mainlocation.id}))
 
 
 
@@ -120,7 +120,7 @@ class ClsMainLocation(ListAPIView):
             print("main location updated")
 
 
-            return JsonResponse(getSuccessDict("main location updated",{"id" : obj_mainlocation.id}))
+            return JsonResponse(getSuccessDict("Location updated",{"id" : obj_mainlocation.id}))
 
 
 
