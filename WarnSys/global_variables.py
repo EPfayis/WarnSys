@@ -2,12 +2,15 @@
 '''Declaring some Global Variable'''
 import sys
 
+
 MESSAGE = "Message"
 ERROR = "Error"
 STATUS = "Status"
 DELIVERY_BOY = "delivery_boy"
 ORDER_MANAGEMENT = "order_management"
 STOCK_MANAGEMENT = "stock_management"
+
+
 
 def generateId(key,value):
     n = value # will be the last id from table

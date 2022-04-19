@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include("user.urls")),
     path('locations/', include("locations.urls")),
+    path('camera/', include("camera.urls")),
 ]
