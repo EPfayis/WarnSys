@@ -70,3 +70,40 @@ class ClsCamera(ListAPIView):
         except Exception as e:
             print("An error occurred : ", str(e))
             return TblCamera.objects.none()
+
+    def put(self,request):
+
+        try:
+
+            objUser = self.request.user
+            userValidator = UserValidator(objUser)
+            print("User Identified")
+
+            id = request.data["id"]
+            objCamera = TblCamera.objects.get(id=id)
+            objCamSecret = TblCamSecret.objects.get(camera=objCamera)
+            location = request.data["location"]
+            objLocation = TblMainLocations.objects.get(id= location)
+            description = request.data["description"]
+            secret = request.data["secret"]
+            print("Request accepted")
+
+            if userValidator.is_superuser == False:
+                return JsonResponse(getValErrorDict("You are not an admin"))
+            if objLocation.is_active == False:
+                return JsonResponse(getValErrorDict("This location is not active"))
+            print("Request validated")
+
+
+            objCamera.location = objLocation
+            objCamera.description = description
+            objCamera.save()
+            objCamSecret.code = secret
+            objCamSecret.save()
+            print("Camera updated")
+
+            return JsonResponse(getSuccessDict("Camera details updated"))
+
+        except Exception as e:
+            print("Exception occurred :", str(e))
+            return JsonResponse(getErrorDict("An error occurred", str(e)))
