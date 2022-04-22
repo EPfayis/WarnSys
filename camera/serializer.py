@@ -20,7 +20,5 @@ class CameraSerializerAdmin(DynamicFieldsModelSerializer):
         fields = ["id","description","secret","location"]
 
     def get_secret(self,data):
-        print(data.id)
         objSecret = TblCamSecret.objects.get(camera_id = data.id)
-        print(objSecret.id)
         return objSecret.code

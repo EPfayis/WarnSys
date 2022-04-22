@@ -107,3 +107,25 @@ class ClsCamera(ListAPIView):
         except Exception as e:
             print("Exception occurred :", str(e))
             return JsonResponse(getErrorDict("An error occurred", str(e)))
+
+    def delete(self,request):
+        try:
+            objUser = self.request.user
+            userValidator = UserValidator(objUser)
+            print("User Identified")
+
+            if userValidator.is_superuser == False:
+                return JsonResponse(getValErrorDict("You are not an admin."))
+
+            id = self.request.GET["id"]
+            objCamera = TblCamera.objects.get(id=id)
+            print("Request Accepted")
+
+            objCamera.delete()
+            print("Camera deleted")
+
+            return JsonResponse(getSuccessDict("Successfully deleted"))
+
+        except Exception as e:
+            print("An Error Occurred : ", str(e))
+            return JsonResponse(getErrorDict("An error occurred", str(e)))
