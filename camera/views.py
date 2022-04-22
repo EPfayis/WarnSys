@@ -116,6 +116,7 @@ class ClsCamera(ListAPIView):
 
             if userValidator.is_superuser == False:
                 return JsonResponse(getValErrorDict("You are not an admin."))
+            print("Request Validated")
 
             id = self.request.GET["id"]
             objCamera = TblCamera.objects.get(id=id)
