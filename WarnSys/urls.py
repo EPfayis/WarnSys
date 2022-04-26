@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from picture.views import imageHandler
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include("user.urls")),
     path('locations/', include("locations.urls")),
     path('camera/', include("camera.urls")),
+    path('alert/', include("alert.urls")),
+    path('media/<str:file_name>/', imageHandler),
 ]
