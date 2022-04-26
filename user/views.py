@@ -2,6 +2,7 @@ from django.shortcuts import render
 from WarnSys.Imports import *
 from .serializers import *
 from .models import *
+from locations.models import TblMainLocations
 # Create your views here.
 
 
@@ -98,6 +99,66 @@ class ClsUser(ListAPIView):
         except Exception as e:
             print("Exception occured : ", str(e))
             return User.objects.none()
+
+    def patch(self, request):
+        try:
+            objUser = self.request.user
+            userValidator = UserValidator(objUser)
+            print("User Identified")
+
+            keyword = request.data["keyword"]
+
+            if keyword == "addWarningLocations":
+
+                lstLocations = request.data["locations"]
+                lstLocations = JsonHandler(lstLocations).getJson()
+                for i in lstLocations:
+                    i = TblMainLocations.objects.get(id=i)
+                print("Request accepted")
+
+                if userValidator.is_anonymouse == True:
+                    return JsonResponse(getValErrorDict("You are not a registered user"))
+                if len(lstLocations) == 0:
+                    return JsonResponse(getValErrorDict("Location list cannot be empty"))
+                if userValidator.user_det == None:
+                    return JsonResponse(getValErrorDict("Update your profile before adding locations"))
+                print("Request validated")
+
+                userValidator.user_det.warnLocations.add(*lstLocations)
+                print("Warning locations added")
+
+                return JsonResponse(getSuccessDict("Warning locations added"))
+
+            if keyword == "removeWarningLocations":
+
+                lstLocations = request.data["locations"]
+                lstLocations = JsonHandler(lstLocations).getJson()
+                for i in lstLocations:
+                    i = TblMainLocations.objects.get(id=i)
+                print("Request accepted")
+
+                if userValidator.is_anonymouse == True:
+                    return JsonResponse(getValErrorDict("You are not a registered user"))
+                if len(lstLocations) == 0:
+                    return JsonResponse(getValErrorDict("Location list cannot be empty"))
+                if userValidator.user_det == None:
+                    return JsonResponse(getValErrorDict("Update your profile before removing locations"))
+                print("Request validated")
+
+                userValidator.user_det.warnLocations.remove(*lstLocations)
+                print("Warning locations added")
+
+                return JsonResponse(getSuccessDict("Warning locations removed"))
+
+            else:
+                return JsonResponse(getValErrorDict("Invalid keyword"))
+
+
+
+        except Exception as e:
+            print("An Error Occurred : ", str(e))
+            return JsonResponse(getErrorDict("An Error Occurred", str(e)))
+
 
 class ClsLogin(ObtainAuthToken):
 

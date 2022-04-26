@@ -2,10 +2,13 @@ from django.contrib.auth.models import User
 from rest_framework import serializers, exceptions
 from .models import *
 from WarnSys.Imports import *
+from locations.serializer import MainLocationSerializer
 
 
 
 class UserDetailsSerializers(DynamicFieldsModelSerializer):
+
+    warnLocations = MainLocationSerializer(many= True,read_only= True)
 
     class Meta:
         model = TblUserDetails
